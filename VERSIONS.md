@@ -34,6 +34,9 @@ Current versions of all skills. Agents can compare against local versions to che
 | sales-enablement | 1.2.0 | 2026-03-14 |
 | schema-markup | 1.2.0 | 2026-03-14 |
 | seo-audit | 1.2.0 | 2026-03-14 |
+| seo-blog-s2-first-draft | 1.0.0 | 2026-03-31 |
+| seo-blog-s1-keyword-research | 1.0.0 | 2026-03-31 |
+| seo-blog-s3-integrate-and-publish | 1.0.0 | 2026-03-31 |
 | signup-flow-cro | 1.2.0 | 2026-03-14 |
 | site-architecture | 1.2.0 | 2026-03-14 |
 | social-content | 1.2.0 | 2026-03-14 |

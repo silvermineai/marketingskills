@@ -1,0 +1,112 @@
+{
+  "skill_name": "seo-blog-s1-keyword-research",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I need to find keywords for our SaaS blog about project management. We're a small startup, blog is about 3 months old with 10 posts.",
+      "expected_output": "Should check for product-marketing-context.md first. Should check for docs/seo/keyword-strategy.md and stop to help the user create it if it doesn't exist, walking through each required section (Target Audience, Topics to Focus On, Topics Never to Focus On, Competitors, Site, Service Pages). Should verify Ahrefs and GSC MCP servers are connected before proceeding. Should classify the blog as 'New' stage and set max KD to 15. Should skip GSC Source 1 since the blog is too new for striking distance data. Should use Ahrefs Keyword Explorer with aggressive filters (KD max 15, word count min 3, volume min 50-100). Should output a JSONL file to docs/seo/keyword-research/YYYY-MM-DD-keywords.jsonl.",
+      "assertions": [
+        "Checks for product-marketing-context.md",
+        "Checks for docs/seo/keyword-strategy.md",
+        "Stops to create keyword-strategy.md if missing",
+        "Verifies Ahrefs and GSC MCP servers are connected",
+        "Classifies blog as New stage with max KD 15",
+        "Skips GSC source since blog is too new",
+        "Uses Ahrefs with KD filter of 15 or lower",
+        "Sets minimum word count filter to 3",
+        "Outputs JSONL file with dated filename"
+      ],
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "what should I blog about? I have no idea where to start",
+      "expected_output": "Should trigger on casual 'what should I blog about' phrasing. Should check for keyword-strategy.md and product-marketing-context.md. If neither exists, should stop and help the user create keyword-strategy.md first — not proceed without it. Should ask about the blog niche, audience, and competitors. Should not start researching keywords until the strategy file is created with all required sections.",
+      "assertions": [
+        "Triggers on casual phrasing",
+        "Checks for keyword-strategy.md",
+        "Stops to create strategy file before researching",
+        "Asks about niche, audience, competitors",
+        "Does not skip any required sections in strategy file",
+        "Walks user through each section interactively"
+      ],
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "Run keyword research for our established marketing blog. We have 300+ posts, DR 45, and GSC connected. Focus on content marketing automation topics.",
+      "expected_output": "Should classify blog as Established with max KD 50. Should use all four sources: GSC striking distance (positions 11-30, sorted by impressions), Ahrefs Keyword Explorer (matching terms with KD max 50), Ahrefs Content Gap (using competitors from strategy file), and browser PAA (top 5-7 seeds). Should deduplicate across sources. Should build topic clusters aligned with the strategy file pillars. Should exclude any topics listed in 'Topics Never to Focus On'. Should assign tiers (1/2/3) based on KD, volume, and business relevance. Should produce JSONL with keyword, volume, kd, intent, topic, cluster, tier, source, lsi, and notes fields.",
+      "assertions": [
+        "Classifies blog as Established with max KD 50",
+        "Uses GSC for striking distance keywords (positions 11-30)",
+        "Uses Ahrefs Keyword Explorer with appropriate filters",
+        "Uses Ahrefs Content Gap with competitor domains",
+        "Uses browser for PAA on top 5-7 seeds",
+        "Deduplicates across sources",
+        "Builds topic clusters",
+        "Excludes topics from 'Topics Never to Focus On'",
+        "Assigns priority tiers",
+        "JSONL includes all required fields including lsi"
+      ],
+      "files": []
+    },
+    {
+      "id": 4,
+      "prompt": "I have a list of 50 keywords from Google Keyword Planner. Can you analyze them and tell me which ones to target?",
+      "expected_output": "Should accept external keyword lists and use Ahrefs Batch Analysis to vet them. Should apply the same KD threshold based on blog stage. Should classify intent for each keyword. Should cross-check against 'Topics to Focus On' and 'Topics Never to Focus On' from the strategy file. Should deduplicate against any existing keyword research JSONL files. Should rank and tier the imported keywords using the same framework as new research. Should output merged results to a new dated JSONL file.",
+      "assertions": [
+        "Accepts external keyword list",
+        "Uses Ahrefs Batch Analysis for vetting",
+        "Applies KD threshold from blog stage",
+        "Classifies search intent for each keyword",
+        "Cross-checks against strategy file topics",
+        "Deduplicates against existing JSONL files",
+        "Ranks and tiers using standard framework",
+        "Outputs to new dated JSONL file"
+      ],
+      "files": []
+    },
+    {
+      "id": 5,
+      "prompt": "Find competitor keyword gaps. Our competitors are ahrefs.com/blog, backlinko.com, and hubspot.com/blog.",
+      "expected_output": "Should use Ahrefs Content Gap analysis with the provided competitor domains. Should apply KD and volume filters based on blog stage. Should prioritize keywords where multiple competitors rank. Should check keywords against 'Topics Never to Focus On'. Should classify intent and build clusters from gap results. Should note which competitors rank for each keyword. Should merge with any existing research if applicable.",
+      "assertions": [
+        "Uses Ahrefs Content Gap with all 3 competitors",
+        "Applies KD filter from blog stage",
+        "Prioritizes keywords ranked by multiple competitors",
+        "Checks against excluded topics",
+        "Classifies search intent",
+        "Builds topic clusters from results",
+        "Notes competitor ranking data"
+      ],
+      "files": []
+    },
+    {
+      "id": 6,
+      "prompt": "keyword research",
+      "expected_output": "Should trigger even on minimal input. Should check for product-marketing-context.md and keyword-strategy.md. Should verify Ahrefs MCP is connected. If strategy file is missing, should stop and create it. If strategy file exists, should pull all context from it and proceed through the full research workflow without needing to ask many additional questions.",
+      "assertions": [
+        "Triggers on minimal 'keyword research' input",
+        "Checks for product-marketing-context.md",
+        "Checks for keyword-strategy.md",
+        "Verifies MCP server prerequisites",
+        "Either creates strategy file or proceeds with existing one",
+        "Does not ask questions already answered in strategy file"
+      ],
+      "files": []
+    },
+    {
+      "id": 7,
+      "prompt": "We need to update our keyword-strategy.md — our service pages have changed and we added two new personas.",
+      "expected_output": "Should read the existing keyword-strategy.md. Should help the user update the Service Pages section to match current repo state. Should verify service page URLs actually exist in src/. Should help add new persona sections with all required fields (Role, Goals, Pain points, Search behavior, Content preferences). Should not overwrite existing sections that haven't changed.",
+      "assertions": [
+        "Reads existing keyword-strategy.md",
+        "Updates Service Pages section",
+        "Verifies service page URLs exist in repo",
+        "Adds new personas with all required fields",
+        "Preserves unchanged sections"
+      ],
+      "files": []
+    }
+  ]
+}

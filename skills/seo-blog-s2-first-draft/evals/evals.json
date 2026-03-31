@@ -1,0 +1,97 @@
+{
+  "skill_name": "seo-blog-s2-first-draft",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Write a blog post from our keyword research. We have a JSONL file ready in docs/seo/keyword-research/.",
+      "expected_output": "Should check for product-marketing-context.md first. Should load the latest JSONL file from docs/seo/keyword-research/. Should select the highest-tier keyword (Tier 1 first, then Tier 2). Should check docs/seo/keywords-used/all.jsonl for duplicates. Should check existing blog posts for topic overlap. Should present the selected keyword with metadata and ask for confirmation. Should run deep research on the confirmed keyword. Should produce a 1,500-2,000 word blog post with BLUF, 3 H2 sections, ~3 H3s each, featured snippet paragraph. Should save to docs/blogs/drafts/.",
+      "assertions": [
+        "Checks for product-marketing-context.md",
+        "Loads latest JSONL from keyword research directory",
+        "Selects highest-tier keyword",
+        "Checks keywords-used ledger for duplicates",
+        "Checks existing blog posts for topic overlap",
+        "Presents keyword with metadata for confirmation",
+        "Runs deep research on confirmed keyword",
+        "Produces 1,500-2,000 word post",
+        "Includes BLUF and featured snippet paragraph",
+        "Saves to docs/blogs/drafts/"
+      ],
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "write a blog about 'how to set up marketing automation for startups'",
+      "expected_output": "Should trigger on direct keyword input. Should check for keyword research JSONL to see if this keyword exists there. If it does, use the metadata (volume, KD, cluster, LSI). If it doesn't, should still proceed but note the keyword hasn't been vetted. Should check for duplicates in keywords-used ledger and existing posts. Should run deep research. Should write the post following BLUF structure with 3 H2 sections, question headings, semantic keyword integration, and E-E-A-T signals throughout. Should weave LSI keywords naturally. Should preserve all research citations as footnotes.",
+      "assertions": [
+        "Triggers on direct keyword input",
+        "Checks JSONL for keyword metadata",
+        "Checks for duplicate content",
+        "Runs deep research",
+        "Follows BLUF structure",
+        "Uses 3 H2 sections with ~3 H3s each",
+        "Includes 3-4 question headings",
+        "Weaves E-E-A-T signals throughout",
+        "Integrates LSI keywords naturally",
+        "Preserves research citations as footnotes"
+      ],
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "draft a blog post",
+      "expected_output": "Should trigger on minimal input. Should check for product-marketing-context.md and keyword research JSONL. If no JSONL exists, should direct user to run seo-blog-s1-keyword-research first. If JSONL exists, should select the top keyword and present it for confirmation. Should not proceed without a confirmed keyword.",
+      "assertions": [
+        "Triggers on minimal 'draft a blog post' input",
+        "Checks for product-marketing-context.md",
+        "Checks for keyword research JSONL",
+        "Directs to S1 if no JSONL exists",
+        "Selects top keyword if JSONL exists",
+        "Presents keyword for confirmation before writing"
+      ],
+      "files": []
+    },
+    {
+      "id": 4,
+      "prompt": "The keyword 'best project management tools for remote teams' was already used for a blog post last month. What should I write about next?",
+      "expected_output": "Should check the keywords-used ledger at docs/seo/keywords-used/all.jsonl to verify the keyword is recorded. Should load the keyword research JSONL and skip the used keyword. Should present the next best keyword (next highest tier, highest volume, lowest KD). Should check for topic overlap with the existing post. If the next keyword is in the same cluster, should note the relationship and explain how the new post would complement the existing one without cannibalizing.",
+      "assertions": [
+        "Checks keywords-used ledger",
+        "Skips already-used keyword",
+        "Presents next best keyword from JSONL",
+        "Checks for topic overlap with existing content",
+        "Notes cluster relationships if applicable",
+        "Explains how posts complement each other"
+      ],
+      "files": []
+    },
+    {
+      "id": 5,
+      "prompt": "Write a blog post but I want it to target a commercial investigation keyword — something like 'best X vs Y' format.",
+      "expected_output": "Should filter the keyword research JSONL for keywords with intent 'commercial'. Should prioritize comparison-style keywords (containing 'vs', 'best', 'comparison', 'alternative'). Should adapt the blog structure for comparison content: may use tables, pros/cons, side-by-side analysis. Should still follow BLUF principles and E-E-A-T signals. Should note that commercial investigation content needs extra care with E-E-A-T Trustworthiness — balanced viewpoints, no bias toward any product unless it's the company's own.",
+      "assertions": [
+        "Filters JSONL for commercial intent keywords",
+        "Prioritizes comparison-style keywords",
+        "Adapts structure for comparison content",
+        "Uses tables or pros/cons format where appropriate",
+        "Follows BLUF principles",
+        "Emphasizes balanced viewpoints for trustworthiness",
+        "Applies E-E-A-T signals throughout"
+      ],
+      "files": []
+    },
+    {
+      "id": 6,
+      "prompt": "Can you help me write some content for our blog? We don't have any keyword research yet.",
+      "expected_output": "Should recognize that keyword research is a prerequisite. Should direct the user to run seo-blog-s1-keyword-research first. Should explain why keyword research matters before writing (targeting the right topics, understanding search intent, building topic clusters). Should NOT proceed to write a blog post without vetted keyword data. Should offer to help run keyword research as an alternative.",
+      "assertions": [
+        "Recognizes missing keyword research",
+        "Directs to seo-blog-s1-keyword-research",
+        "Explains why keyword research is needed first",
+        "Does NOT write without keyword data",
+        "Offers to help run keyword research"
+      ],
+      "files": []
+    }
+  ]
+}

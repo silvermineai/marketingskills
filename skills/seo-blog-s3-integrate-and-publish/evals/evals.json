@@ -1,0 +1,129 @@
+{
+  "skill_name": "seo-blog-s3-integrate-and-publish",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I have a blog draft in docs/blogs/drafts/marketing-automation-guide.md. Prep it for publishing.",
+      "expected_output": "Should read the draft from docs/blogs/drafts/. Should read product-marketing-context.md and keyword-strategy.md. Should discover the repo structure (Astro or Hydrogen), blog directory, CTA component, contact page, resources page, and site config. Should verify author info exists in site config. Should copy the draft into the site's blog directory with a keyword-optimal slug, avoiding duplicates. Should clean up frontmatter to match existing posts. Should verify footnote format is Astro-compatible. Should enforce 'we' tone, remove AI slop, run content guardrails. Should add internal links (2 home, 2 pillar, 2 blog, 2 service, 1-2 resources). Should add 'Why {Company}' section with CTA callout. Should add FAQ section with schema. Should add Article schema. Should run final compliance checklist. Should move draft to docs/blogs/published/.",
+      "assertions": [
+        "Reads draft from docs/blogs/drafts/",
+        "Reads product-marketing-context.md and keyword-strategy.md",
+        "Discovers repo structure and framework",
+        "Verifies author info in site config",
+        "Copies draft to src/ blog directory with keyword-optimal slug",
+        "Checks slug doesn't duplicate existing URLs",
+        "Cleans frontmatter to match existing posts",
+        "Verifies footnote format is Astro-compatible",
+        "Enforces 'we' tone throughout",
+        "Removes AI slop phrases",
+        "Adds all required internal links",
+        "Adds 'Why {Company}' section with CTA",
+        "Adds FAQ section with FAQ schema",
+        "Adds Article schema with author from config",
+        "Runs final compliance checklist",
+        "Moves draft to docs/blogs/published/"
+      ],
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "publish this blog draft — it mentions our Austin, TX office a lot since it's about local SEO services",
+      "expected_output": "Should detect geographic content (Austin, TX) and add LocalBusiness schema with areaServed in addition to the standard Article and FAQ schemas. Should ensure the meta description includes the location. Should still add all standard internal links, CTA, FAQ, and run compliance checks. Geographic schema should reference the specific area mentioned in the article.",
+      "assertions": [
+        "Detects geographic content references",
+        "Adds LocalBusiness schema with areaServed",
+        "Includes location in meta description",
+        "Adds Article schema",
+        "Adds FAQ schema",
+        "Adds all standard internal links",
+        "Adds 'Why {Company}' section with CTA",
+        "Runs full compliance checklist"
+      ],
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "integrate this blog post into our site",
+      "expected_output": "Should trigger on 'integrate' phrasing. Should check for drafts in docs/blogs/drafts/. If multiple drafts exist, should ask the user which one. Should read existing blog posts to learn the frontmatter format, file naming convention, and content structure. Should discover the CTA component or offer to create one. Should proceed through all 9 steps of the publish prep workflow.",
+      "assertions": [
+        "Triggers on 'integrate' phrasing",
+        "Checks docs/blogs/drafts/ for available drafts",
+        "Asks which draft if multiple exist",
+        "Reads existing posts to learn patterns",
+        "Discovers or creates CTA component",
+        "Proceeds through full 9-step workflow"
+      ],
+      "files": []
+    },
+    {
+      "id": 4,
+      "prompt": "This draft mentions competitor pricing and makes some bold claims about ROI. Can you clean it up and publish it?",
+      "expected_output": "Should flag the pricing mentions and bold ROI claims during the content guardrails check in Step 3. Should remove specific pricing references. Should soften or remove guaranteed ROI claims (e.g., change 'you will see 300% ROI' to 'many businesses report significant improvements'). Should not publish until these issues are resolved. Should report the specific violations found and the fixes applied. Should still complete all other publish prep steps after cleanup.",
+      "assertions": [
+        "Flags pricing mentions during content guardrails",
+        "Removes specific pricing references",
+        "Softens or removes guaranteed ROI claims",
+        "Does not publish with guardrail violations",
+        "Reports specific violations and fixes",
+        "Completes all other publish prep steps after cleanup"
+      ],
+      "files": []
+    },
+    {
+      "id": 5,
+      "prompt": "The blog draft uses 'I think' and 'In my experience' throughout — it reads like a personal blog, not a company post. Fix it and publish.",
+      "expected_output": "Should detect the 'I' voice issue during the tone check in Step 3. Should convert all 'I' statements to 'we' voice (e.g., 'I think' → 'we believe', 'In my experience' → 'In our experience'). Should scan for all first-person singular pronouns and replace them. Should verify the tone is consistently 'we' after changes. Should still be educational and promotional, not just mechanically replacing pronouns.",
+      "assertions": [
+        "Detects 'I' voice during tone check",
+        "Converts all 'I' to 'we' voice",
+        "Replaces 'In my experience' with 'In our experience'",
+        "Scans for all first-person singular pronouns",
+        "Verifies consistent 'we' tone after changes",
+        "Maintains educational and promotional quality"
+      ],
+      "files": []
+    },
+    {
+      "id": 6,
+      "prompt": "Publish this draft. Our site doesn't have a CTA component yet.",
+      "expected_output": "Should discover that no CTA component exists during repo structure analysis. Should create a CTA component that matches the site's existing design system (CSS variables, component conventions). For Astro, should create a .astro component with heading, description, buttonText, and buttonUrl props. Should use the new component in the 'Why {Company}' section. Should inform the user that a new component was created and where it lives.",
+      "assertions": [
+        "Discovers missing CTA component",
+        "Creates CTA component matching design system",
+        "Uses existing CSS variables and conventions",
+        "Includes heading, description, buttonText, buttonUrl props",
+        "Uses new component in 'Why {Company}' section",
+        "Informs user about newly created component"
+      ],
+      "files": []
+    },
+    {
+      "id": 7,
+      "prompt": "The draft has markdown footnotes like [^1] but we're using Astro with MDX. Will this work?",
+      "expected_output": "Should check astro.config.mjs for remark plugin configuration. If remarkGfm or a footnotes plugin is configured, should confirm footnotes will work. If no footnote plugin is configured, should convert footnotes to Astro-compatible format: either inline links or a manual 'Sources' list with numbered <sup> tags and anchor links. Should warn that bare [^1] syntax in .mdx files can cause build errors without a plugin. Should match whatever citation format existing posts use.",
+      "assertions": [
+        "Checks astro.config.mjs for remark plugins",
+        "Identifies whether footnote plugins are configured",
+        "Converts footnotes if no plugin exists",
+        "Warns about MDX build errors with bare footnote syntax",
+        "Matches existing citation format from other posts",
+        "Provides working alternative format"
+      ],
+      "files": []
+    },
+    {
+      "id": 8,
+      "prompt": "Publish this blog but some of the service page links in keyword-strategy.md point to pages that don't exist anymore.",
+      "expected_output": "Should validate service page URLs from keyword-strategy.md against actual pages in the src/ directory during Step 4. Should flag the broken/missing service pages to the user. Should ask the user to update keyword-strategy.md with correct URLs. Should not link to nonexistent pages. Should still complete linking for service pages that do exist. Should use alternative relevant pages if the user provides them.",
+      "assertions": [
+        "Validates service page URLs against src/ directory",
+        "Flags missing service pages to user",
+        "Asks user to update keyword-strategy.md",
+        "Does not link to nonexistent pages",
+        "Completes linking for valid service pages",
+        "Accepts alternative pages from user"
+      ],
+      "files": []
+    }
+  ]
+}

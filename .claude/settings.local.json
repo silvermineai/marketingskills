@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(tools2 --help)"
+    ]
+  }
+}
