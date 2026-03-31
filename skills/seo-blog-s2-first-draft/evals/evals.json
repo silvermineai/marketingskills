@@ -4,7 +4,7 @@
     {
       "id": 1,
       "prompt": "Write a blog post from our keyword research. We have a JSONL file ready in docs/seo/keyword-research/.",
-      "expected_output": "Should check for product-marketing-context.md first. Should load the latest JSONL file from docs/seo/keyword-research/. Should select the highest-tier keyword (Tier 1 first, then Tier 2). Should check docs/seo/keywords-used/all.jsonl for duplicates. Should check existing blog posts for topic overlap. Should present the selected keyword with metadata and ask for confirmation. Should run deep research on the confirmed keyword. Should produce a 1,500-2,000 word blog post with BLUF, 3 H2 sections, ~3 H3s each, featured snippet paragraph. Should save to docs/blogs/drafts/.",
+      "expected_output": "Should check for product-marketing-context.md first. Should load the latest JSONL file from docs/seo/keyword-research/. Should select the highest-tier keyword (Tier 1 first, then Tier 2). Should check docs/seo/keywords-used/all.jsonl for duplicates. Should check existing blog posts for topic overlap. Should present the selected keyword with metadata and ask for confirmation. Should run deep research using sbd (uvx --from git+https://github.com/silvermineai/seo-blog-drafter sbd run) with --output-dir docs/blogs/drafts, converting the keyword into a research question, --timeout 1800, --poll-interval 5, --processor lite. Should then produce a 1,500-2,000 word blog post with BLUF, 3 H2 sections, ~3 H3s each, featured snippet paragraph. Should save to docs/blogs/drafts/.",
       "assertions": [
         "Checks for product-marketing-context.md",
         "Loads latest JSONL from keyword research directory",
@@ -12,7 +12,8 @@
         "Checks keywords-used ledger for duplicates",
         "Checks existing blog posts for topic overlap",
         "Presents keyword with metadata for confirmation",
-        "Runs deep research on confirmed keyword",
+        "Runs sbd with correct flags (--output-dir docs/blogs/drafts, --timeout 1800, --processor lite)",
+        "Converts keyword to research question for --query",
         "Produces 1,500-2,000 word post",
         "Includes BLUF and featured snippet paragraph",
         "Saves to docs/blogs/drafts/"
@@ -27,7 +28,7 @@
         "Triggers on direct keyword input",
         "Checks JSONL for keyword metadata",
         "Checks for duplicate content",
-        "Runs deep research",
+        "Runs sbd for deep research",
         "Follows BLUF structure",
         "Uses 3 H2 sections with ~3 H3s each",
         "Includes 3-4 question headings",

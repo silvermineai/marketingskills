@@ -69,17 +69,25 @@ Once confirmed, move the keyword record from the source JSONL to `docs/seo/keywo
 
 ## Step 1: Deep Research
 
-Run deep research on the selected keyword/topic using `tools2`:
+Run deep research on the selected keyword/topic using `sbd` (SEO Blog Drafter):
 
 ```bash
-tools2 <keyword-or-topic> [--output-dir <directory>]
+uvx --from git+https://github.com/silvermineai/seo-blog-drafter sbd run \
+    --output-dir docs/blogs/drafts \
+    --query "<keyword or topic — phrase as a research question, e.g., 'What are the best practices for [topic]? Search the internet.'>" \
+    --timeout 1800 \
+    --poll-interval 5 \
+    --processor lite
 ```
 
-**TODO: Update this section with the exact `tools2` CLI signature once available.**
+**Parameters:**
+- `--output-dir`: Always use `docs/blogs/drafts` — this is the staging area for S3
+- `--query`: Convert the keyword into a research question. Add "Search the internet." to ensure web research is included
+- `--timeout`: 1800 seconds (30 minutes) — deep research takes time
+- `--poll-interval`: 5 seconds between status checks
+- `--processor lite`: Use the lite processor for faster output
 
-The `tools2` command produces a markdown file with footnotes and citations. Note the output directory — the final blog post will be saved there.
-
-If `tools2` specifies an output directory, use it. If not, check if `docs/seo/keyword-strategy.md` specifies a blog output directory. If neither exists, ask the user where to save the blog post.
+The `sbd` command produces a markdown file with footnotes and citations in the output directory. Wait for it to complete before proceeding.
 
 ### What to extract from the research
 
@@ -187,7 +195,7 @@ E-E-A-T is not a section — it is a lens applied across the entire post.
 - Go beyond surface-level advice — include the "why" behind recommendations
 
 **Authoritativeness:**
-- Reference the research citations from Step 1 (use footnotes from the `tools2` output)
+- Reference the research citations from Step 1 (use footnotes from the `sbd` research output)
 - Link to authoritative external sources (academic papers, official documentation, industry reports)
 - Include specific data points, percentages, or statistics with attribution
 
@@ -202,11 +210,13 @@ E-E-A-T is not a section — it is a lens applied across the entire post.
 
 ### 3a. Save the blog post
 
-Save the finished blog post as a markdown file in the same directory where `tools2` saved the research output. Use the slug from the frontmatter as the filename:
+Save the finished blog post to `docs/blogs/drafts/` using the slug from the frontmatter as the filename:
 
 ```
-<output-dir>/<slug>.md
+docs/blogs/drafts/<slug>.md
 ```
+
+The `sbd` research output will also be in this directory. The blog post file is separate from the research output.
 
 ### 3b. Update the keywords-used ledger
 
