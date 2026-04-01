@@ -22,6 +22,15 @@ Look for author name and credentials in the site's config (e.g., `config.yml`, `
 
 Store the answer in the site config so future runs don't need to ask again.
 
+**Check for blog directory configuration:**
+Read `docs/seo/keyword-strategy.md` and look for a `# Blog Post Instructions` section. This should specify the blog content directory in the repo (e.g., `src/content/blog/`). If this section doesn't exist, ask the user what directory their blog posts live in, then add it to the strategy file:
+
+```markdown
+# Blog Post Instructions
+- **Blog directory**: src/content/blog/
+- **Framework**: Astro (or Shopify Hydrogen)
+```
+
 ---
 
 ## Step 0: Select the Target Keyword
@@ -65,6 +74,10 @@ Present the selected keyword to the user with its metadata (volume, KD, intent, 
 
 Once confirmed, move the keyword record from the source JSONL to `docs/seo/keyword-research/YYYY-MM-DD-used.jsonl` (today's date). Remove it from the original file so it is not picked again.
 
+**Note:** There are two keyword tracking mechanisms — they serve different purposes:
+- **YYYY-MM-DD-used.jsonl**: Mutates the source JSONL by removing used keywords. Prevents re-selection in future runs.
+- **keywords-used/all.jsonl** (updated in Step 3): Append-only ledger linking keywords to draft paths. Used by S3 to find the exact draft file and keyword metadata.
+
 ---
 
 ## Step 1: Deep Research
@@ -87,11 +100,15 @@ uvx --from git+https://github.com/silvermineai/seo-blog-drafter sbd run \
 - `--poll-interval`: 5 seconds between status checks
 - `--processor lite`: Use the lite processor for faster output
 
-The `sbd` command produces a markdown file with footnotes and citations in the output directory. Wait for it to complete before proceeding.
+The `sbd` command produces a `parallel-blog.md` file with footnotes and citations in the output directory (e.g., `docs/blogs/drafts/{post}/parallel-blog.md`). Wait for it to complete before proceeding.
+
+### Also read the S1 research report
+
+If `docs/seo/keyword-research/YYYY-MM-DD-research.md` exists, read it. The cluster overview section tells you the recommended pillar post angle, related keywords in the cluster, and LSI terms — all useful for structuring the blog post.
 
 ### What to extract from the research
 
-Read the research output and identify:
+Read the `parallel-blog.md` output and identify:
 - **Key facts and statistics** with their source citations
 - **Expert opinions or quotes** that can be attributed
 - **Common misconceptions** to address
@@ -102,7 +119,25 @@ Read the research output and identify:
 
 ## Step 2: Write the SEO-Optimized Blog Post
 
-Using the research from Step 1, write a blog post following these specifications:
+**Don't reinvent the wheel.** The `sbd` tool produces a `parallel-blog.md` in `docs/blogs/drafts/{post}/`. There will also be a `{title}.md` file in the same folder. The `{title}.md` is your working file — edit it, not the `parallel-blog.md`. Use `parallel-blog.md` as a reference for research, citations, and structure.
+
+1. Open `docs/blogs/drafts/{post}/{title}.md` — this is the file you edit
+2. Reference `parallel-blog.md` in the same folder for research data, footnotes, and citations
+3. Apply the SEO optimizations, heading structure, and E-E-A-T signals below to the working file
+4. Preserve the structure of references and footnotes from the parallel blog
+
+When editing, **preserve all footnotes and citations**. Do not strip references or remove source links. These are critical for E-E-A-T and will be cleaned up for the framework in S3.
+
+**Use GitHub-flavored markdown footnote format:**
+- In the body text: `[^1]` — not `<sup>[1]</sup>`, not `(1)`, not `[1]`
+- At the bottom: `[^1]: Source title and URL` — one per line
+- All links must be `[title](url)` format — no bare URLs
+
+**Before writing, cross-check the keyword against "Topics Never to Focus On" in `docs/seo/keyword-strategy.md`.** If the keyword or topic overlaps with an excluded area, stop and flag it to the user rather than writing a post that S3 will reject.
+
+**Always write in "we" voice** — this is company content, not a personal blog. Use "we recommend," "in our experience," "our team." Never use "I" or "my." S3 will scan for violations, but getting this right in the draft avoids rework.
+
+Write the post following these specifications:
 
 ### Target Specs
 
@@ -112,7 +147,7 @@ Using the research from Step 1, write a blog post following these specifications
 | **H2 sections** | 3 main sections |
 | **H3 subsections** | ~3 per H2 (9 total) |
 | **Question headings** | 3-4 of the section titles should be human-centric questions |
-| **Tone** | Conversational, authoritative, definitive |
+| **Tone** | Conversational, authoritative, definitive — always use "we" voice (company perspective) |
 
 ### Frontmatter
 
@@ -206,41 +241,39 @@ E-E-A-T is not a section — it is a lens applied across the entire post.
 
 ---
 
-## Step 3: Save and Record
+## Step 3: Record and Handoff
 
-### 3a. Save the blog post
+The finished draft stays in `docs/blogs/drafts/{post}/`. S3 will handle moving it to published and copying it into the blog directory. This creates a kanban-style workflow:
+- `docs/blogs/drafts/` — posts ready for integration and publishing (S3's input)
+- `docs/blogs/published/` — posts that have been finalized and deployed
 
-Save the finished blog post to `docs/blogs/drafts/` using the slug from the frontmatter as the filename:
-
-```
-docs/blogs/drafts/<slug>.md
-```
-
-The `sbd` research output will also be in this directory. The blog post file is separate from the research output.
-
-### 3b. Update the keywords-used ledger
+### 3a. Update the keywords-used ledger
 
 Append a record to `docs/seo/keywords-used/all.jsonl`:
 
 ```json
-{"keyword": "<keyword>", "topic": "<topic>", "date": "YYYY-MM-DD", "blog_path": "<relative path to blog file>", "slug": "<slug>", "cluster": "<cluster>", "source_keyword_file": "<original JSONL filename>"}
+{"keyword": "<keyword>", "topic": "<topic>", "date": "YYYY-MM-DD", "draft_path": "docs/blogs/drafts/{post}/{title}.md", "slug": "<slug>", "cluster": "<cluster>", "intent": "<intent>", "lsi": ["<lsi terms>"], "source_keyword_file": "<original JSONL filename>"}
 ```
 
 Create the `docs/seo/keywords-used/` directory if it does not exist.
 
-### 3c. Print summary
+### 3b. Print summary
 
 ```
 ## Blog Draft Summary
 
-- **Keyword**: <keyword>
+- **Keyword**: <keyword> (volume: X, KD: X, intent: X)
 - **Topic**: <topic>
+- **Cluster**: <cluster>
+- **LSI terms**: <comma-separated list>
 - **Word count**: <count>
-- **Saved to**: <file path>
+- **Draft location**: docs/blogs/drafts/{post}/{title}.md
 - **Keywords used ledger**: docs/seo/keywords-used/all.jsonl
 - **Keyword moved to**: docs/seo/keyword-research/YYYY-MM-DD-used.jsonl
-- **Next step**: Run the publishing/integration skill to finalize
+- **Next step**: Run seo-blog-s3-integrate-and-publish to add schema, links, CTA, copy to blog directory, and move to published
 ```
+
+This summary gives S3 all the metadata it needs to proceed without re-discovering the keyword data.
 
 ---
 
@@ -255,10 +288,13 @@ Before presenting the draft, verify:
 - [ ] Word count is 1,500-2,000
 - [ ] LSI keywords from the keyword record are used naturally
 - [ ] E-E-A-T signals are woven throughout (not isolated in one section)
-- [ ] All citations from research are preserved with footnotes
+- [ ] All citations use `[^N]` footnote format (not `<sup>` or inline numbers)
+- [ ] All links use `[title](url)` format (no bare URLs)
 - [ ] Meta title is under 70 characters
 - [ ] Meta description is under 155 characters
 - [ ] No keyword stuffing — every placement reads naturally
+- [ ] "We" voice throughout — no "I" or "my" statements
+- [ ] Topic is not in "Topics Never to Focus On"
 - [ ] Frontmatter includes all required fields
 
 ---

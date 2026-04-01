@@ -4,15 +4,16 @@
     {
       "id": 1,
       "prompt": "I have a blog draft in docs/blogs/drafts/marketing-automation-guide.md. Prep it for publishing.",
-      "expected_output": "Should read the draft from docs/blogs/drafts/. Should read product-marketing-context.md and keyword-strategy.md. Should discover the repo structure (Astro or Hydrogen), blog directory, CTA component, contact page, resources page, and site config. Should verify author info exists in site config. Should copy the draft into the site's blog directory with a keyword-optimal slug, avoiding duplicates. Should clean up frontmatter to match existing posts. Should verify footnote format is Astro-compatible. Should enforce 'we' tone, remove AI slop, run content guardrails. Should add internal links (2 home, 2 pillar, 2 blog, 2 service, 1-2 resources). Should add 'Why {Company}' section with CTA callout. Should add FAQ section with schema. Should add Article schema. Should run final compliance checklist. Should move draft to docs/blogs/published/.",
+      "expected_output": "Should read keywords-used/all.jsonl to find the draft_path and keyword metadata. Should read the draft from docs/blogs/drafts/. Should read product-marketing-context.md and keyword-strategy.md (including Blog Post Instructions for blog directory). Should discover the repo structure (Astro or Hydrogen), CTA component, contact page, resources page, and site config. Should verify author info exists in site config. Should copy the draft from docs/blogs/drafts/ into the site's blog directory with a keyword-optimal slug, avoiding duplicates. Should clean up frontmatter to match existing posts including keywords array. Should verify footnote format is Astro-compatible. Should enforce 'we' tone, remove AI slop, run content guardrails. Should add internal links (2 home, 2 pillar, 2 blog, 2 service, 1-2 resources). Should add 'Why {Company}' section with CTA callout. Should add FAQ section with schema. Should add Article schema. Should run final compliance checklist. Should move draft folder from docs/blogs/drafts/ to docs/blogs/published/. Should update keywords-used ledger with final blog_path.",
       "assertions": [
+        "Reads keywords-used/all.jsonl to find draft_path and keyword metadata",
         "Reads draft from docs/blogs/drafts/",
-        "Reads product-marketing-context.md and keyword-strategy.md",
+        "Reads Blog Post Instructions from keyword-strategy.md for blog directory",
         "Discovers repo structure and framework",
         "Verifies author info in site config",
-        "Copies draft to src/ blog directory with keyword-optimal slug",
+        "Copies draft from drafts/ to blog directory with keyword-optimal slug",
         "Checks slug doesn't duplicate existing URLs",
-        "Cleans frontmatter to match existing posts",
+        "Cleans frontmatter including keywords array",
         "Verifies footnote format is Astro-compatible",
         "Enforces 'we' tone throughout",
         "Removes AI slop phrases",
@@ -21,7 +22,8 @@
         "Adds FAQ section with FAQ schema",
         "Adds Article schema with author from config",
         "Runs final compliance checklist",
-        "Moves draft to docs/blogs/published/"
+        "Moves draft folder to docs/blogs/published/",
+        "Updates keywords-used ledger with final blog_path"
       ],
       "files": []
     },
@@ -44,14 +46,17 @@
     {
       "id": 3,
       "prompt": "integrate this blog post into our site",
-      "expected_output": "Should trigger on 'integrate' phrasing. Should check for drafts in docs/blogs/drafts/. If multiple drafts exist, should ask the user which one. Should read existing blog posts to learn the frontmatter format, file naming convention, and content structure. Should discover the CTA component or offer to create one. Should proceed through all 9 steps of the publish prep workflow.",
+      "expected_output": "Should trigger on 'integrate' phrasing. Should read keywords-used/all.jsonl for draft paths. Should check docs/blogs/drafts/ for available draft folders. If multiple drafts exist, should list them and ask the user which one. Should read Blog Post Instructions from keyword-strategy.md for the blog directory. Should read existing blog posts to learn the frontmatter format. Should discover the CTA component or offer to create one. Should copy draft from drafts/ to blog directory, then proceed through all steps. Should move the draft folder to published/ at the end.",
       "assertions": [
         "Triggers on 'integrate' phrasing",
+        "Reads keywords-used ledger for draft paths",
         "Checks docs/blogs/drafts/ for available drafts",
         "Asks which draft if multiple exist",
+        "Reads Blog Post Instructions from keyword-strategy.md",
         "Reads existing posts to learn patterns",
+        "Copies draft from drafts/ to blog directory",
         "Discovers or creates CTA component",
-        "Proceeds through full 9-step workflow"
+        "Moves draft folder to published/ at the end"
       ],
       "files": []
     },

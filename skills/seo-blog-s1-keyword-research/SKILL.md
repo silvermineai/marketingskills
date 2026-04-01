@@ -75,6 +75,10 @@ If the file does not exist or is missing required sections, **stop and ask the u
 - Content marketing → /services/content-marketing
 - SEO consulting → /services/seo
 - Marketing automation → /services/automation
+
+# Blog Post Instructions
+- **Blog directory**: src/content/blog/
+- **Framework**: Astro
 ```
 
 ---
@@ -241,9 +245,9 @@ Business relevance is a judgment call: does this keyword connect to what the blo
 
 ## Step 7: Generate Output
 
-The final deliverable is a JSONL file. Each line is a valid JSON object.
+Two files are produced: a JSONL data file and a human-readable research report.
 
-### Output Format
+### Output 1: JSONL Keyword File
 
 **File:** Save to `docs/seo/keyword-research/YYYY-MM-DD-keywords.jsonl` (e.g., `2026-03-31-keywords.jsonl`). Use today's date. Create directories if needed. This allows tracking keyword research over time without overwriting previous runs.
 
@@ -269,9 +273,25 @@ The final deliverable is a JSONL file. Each line is a valid JSON object.
 
 **Relationship:** Many keywords map to one topic. Multiple keyword records can share the same `topic` value — this means they'd all be targeted by a single blog post. The `topic` field represents the blog post angle, and a good post will target several keyword variants.
 
+### Output 2: Research Report
+
+**File:** Save to `docs/seo/keyword-research/YYYY-MM-DD-research.md` (same date as the JSONL).
+
+Use the template in `references/research-report-template.md` to generate this report. It includes:
+
+- **Research parameters** — site, blog stage, KD threshold, seeds, competitors, sources used
+- **Executive summary** — total keywords, Tier 1 count, biggest cluster, recommended first action
+- **Clusters overview** — for each cluster: pillar keyword, supporting count, total volume, avg KD, intent mix, LSI terms, recommended pillar post angle, quick wins
+- **Top 10 keywords by opportunity** — ranked table with rationale for each
+- **Source breakdown** — what each source contributed (GSC, Ahrefs Explorer, Content Gap, PAA) with counts at each filter stage
+- **Excluded keywords** — promising keywords that were excluded and why (off-topic, above KD, in "Topics Never to Focus On")
+- **Strategy observations** — flag new topic opportunities, topics worth reconsidering, competitor insights, and service page gaps that suggest updating `keyword-strategy.md`
+
+This report is the human-readable companion to the JSONL file. It helps the user review, prioritize, and make strategic decisions before moving to S2 (first draft).
+
 ### Output Summary
 
-After generating the JSONL file, print a summary:
+After generating both files, print a summary:
 
 ```
 ## Keyword Research Summary
@@ -282,7 +302,8 @@ After generating the JSONL file, print a summary:
 - **Tier 3 (backlog)**: [count]
 - **Clusters identified**: [list cluster names]
 - **Top 5 keywords by opportunity**: [list]
-- **File saved to**: docs/seo/keyword-research/YYYY-MM-DD-keywords.jsonl
+- **JSONL saved to**: docs/seo/keyword-research/YYYY-MM-DD-keywords.jsonl
+- **Report saved to**: docs/seo/keyword-research/YYYY-MM-DD-research.md
 ```
 
 ---
@@ -301,7 +322,7 @@ After generating the JSONL file, print a summary:
 
 ## Handoff
 
-This skill produces a ranked keyword list. It does **not** write blog content or outlines. The next step in the workflow is to take the topics from the JSONL output and run deep research on each one before writing.
+This skill produces a ranked keyword list (JSONL) and a human-readable research report (markdown). It does **not** write blog content or outlines. The next step in the workflow is to take the topics from the JSONL output and run deep research on each one before writing.
 
 For related skills:
 - **content-strategy** — planning what content to create and when

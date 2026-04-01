@@ -15,10 +15,11 @@ The final article must be **promotional SEO material written on behalf of the co
 
 Before starting, you need access to:
 
-1. **The blog draft** — a markdown file in `docs/blogs/drafts/` (output from S2)
-2. **The site repo** — an Astro or Shopify Hydrogen project with a blog content directory in `src/`
-3. **Keyword research** — the JSONL file from S1 at `docs/seo/keyword-research/`
-4. **Keyword strategy** — `docs/seo/keyword-strategy.md` with service pages, audience, and topics
+1. **The blog draft** — a folder in `docs/blogs/drafts/{post}/` containing the edited `{title}.md` (output from S2) and the `parallel-blog.md` research reference
+2. **The keywords-used ledger** — `docs/seo/keywords-used/all.jsonl` with the `draft_path`, keyword metadata, and LSI terms for this post (written by S2)
+3. **The site repo** — an Astro or Shopify Hydrogen project with a blog content directory in `src/`
+4. **Keyword research** — the JSONL file from S1 at `docs/seo/keyword-research/`
+5. **Keyword strategy** — `docs/seo/keyword-strategy.md` with service pages, audience, topics, and blog post instructions
 
 If any of these are missing, stop and tell the user.
 
@@ -29,31 +30,37 @@ If any of these are missing, stop and tell the user.
 **Read these files in order:**
 
 1. `.agents/product-marketing-context.md` (or `.claude/product-marketing-context.md`) — company name, product, positioning
-2. `docs/seo/keyword-strategy.md` — audience personas, service pages, competitors, site URL, topics to avoid
-3. The blog draft in `docs/blogs/drafts/` — the user will specify which file
-4. The most recent JSONL from `docs/seo/keyword-research/` — for keyword data, LSI terms, and FAQ generation
+2. `docs/seo/keyword-strategy.md` — audience personas, service pages, competitors, site URL, topics to avoid, blog post instructions
+3. `docs/seo/keywords-used/all.jsonl` — find the most recent entry to get the `draft_path`, keyword, cluster, intent, and LSI terms for this post
+4. The blog draft at the `draft_path` from the ledger (in `docs/blogs/drafts/{post}/`)
+5. The most recent JSONL from `docs/seo/keyword-research/` — for additional keyword data and FAQ generation from PAA sources
 
 **Discover the repo structure:**
 
-Read the site's `src/` directory to determine:
+Read the `# Blog Post Instructions` section from `docs/seo/keyword-strategy.md` for the blog directory and framework. Then confirm by reading the site's `src/` directory:
 - **Framework**: Astro (`src/content/blog/`) or Shopify Hydrogen (`src/routes/blog/` or similar)
-- **Blog directory**: Where existing blog posts live — read 2-3 existing posts to learn the frontmatter pattern, file naming convention, and content structure
+- **Blog directory**: As specified in keyword-strategy.md — read 2-3 existing posts to learn the frontmatter pattern, file naming convention, and content structure
 - **CTA component**: Search for an existing CTA component (e.g., `CTA.astro`, `CallToAction.astro`, `CTA.tsx`). If none exists, create one (see Step 5)
 - **Contact page**: Find the contact/contact-us page URL
 - **Resources/case studies page**: Look for `/resources`, `/case-studies`, `/recent-projects`, or similar
-- **Site config**: Find the site URL and author info in the config file (e.g., `astro.config.mjs`, `site.config.ts`, or similar). If author info is missing, stop and ask the user to add it before proceeding — this is required for Article schema.
+- **Site config**: Find the site URL and author info in the config file (e.g., `astro.config.mjs`, `site.config.ts`, or similar). Author info should already exist (S2 sets it up) — if missing, stop and ask the user to add it. Required for Article schema.
 
 ---
 
-## Step 1: Copy Draft into Site
+## Step 1: Copy Draft into Blog Directory
 
-1. Read the draft from `docs/blogs/drafts/[filename].md`
-2. Determine a keyword-optimal URL slug:
-   - Use the primary keyword from the JSONL data
-   - Keep it short, lowercase, hyphenated (e.g., `how-to-train-a-puppy`)
-   - Check existing blog posts in `src/` to avoid duplicate slugs
-3. Copy the draft into the site's blog directory with the new slug as filename
-4. All further edits happen in `src/`, not in `docs/`
+The draft is in `docs/blogs/drafts/{post}/` (a kanban-style staging area). Your job is to copy it into the live blog directory.
+
+1. Read `docs/seo/keywords-used/all.jsonl` and find the most recent entry — the `draft_path` field points to the exact file
+2. Read the draft file to confirm it exists and has content
+3. Determine a keyword-optimal URL slug using the keyword data from the ledger entry. Check existing blog posts in the blog directory to avoid duplicate slugs
+4. Copy the draft into the blog content directory (from `# Blog Post Instructions` in `keyword-strategy.md`):
+
+```bash
+cp docs/blogs/drafts/{post}/{title}.md {blog-directory}/{seo-slug}.md
+```
+
+5. All further edits happen on the copy in the blog directory, not the draft
 
 ---
 
@@ -68,6 +75,7 @@ Read 2-3 existing blog posts to match the exact frontmatter format. Then ensure 
 | `date` | Today's date in the format used by existing posts |
 | `author` | Pull from site config |
 | `slug` | The keyword-optimal slug from Step 1 |
+| `keywords` | Array of primary keyword, secondary keyword, and long-tail variant (should already exist from S2 — verify and expand if needed using LSI terms from the ledger) |
 | `tags`/`categories` | Match existing taxonomy from other blog posts |
 | `draft` | Set to `false` (or remove if the framework doesn't use it) |
 
@@ -75,14 +83,19 @@ Do **not** add an `image` or `og:image` field — skip for now.
 
 Match every other frontmatter field that existing posts use. Do not invent new fields.
 
-### Footnote / Citation Format (Astro)
+### Footnote and Link Format
 
-If this is an Astro repo, verify all footnotes and citations are Astro-compatible:
+Ensure all footnotes and links use standard markdown format:
 
+- **All links** must be `[title](url)` format — no bare URLs, no HTML `<a>` tags, no reference-style links without definitions
+- **All footnotes** must be standard markdown: `[^1]` in body text with `[^1]: source text` definitions at the bottom
+- Convert any non-markdown citation formats (e.g., parenthetical references, numbered lists without footnote syntax, inline URLs) to proper `[^N]` footnotes
+
+**Astro compatibility:**
 - Standard markdown footnotes (`[^1]` / `[^1]: ...`) require `remarkGfm` or a remark footnotes plugin. Check `astro.config.mjs` for remark plugin configuration.
-- If no footnote plugin is configured, convert footnotes to inline links or a manual "Sources" list at the bottom (e.g., numbered `<sup>` tags with corresponding anchor links).
-- Ensure footnote syntax doesn't break MDX compilation — bare `[^1]` in `.mdx` files can cause build errors if not handled by a plugin.
-- Check that existing blog posts use a consistent citation format and match it exactly.
+- If no footnote plugin is configured, convert footnotes to a manual "Sources" section at the bottom using numbered `<sup>` tags with anchor links (e.g., `<sup><a href="#ref1">1</a></sup>`)
+- Ensure footnote syntax doesn't break MDX compilation — bare `[^1]` in `.mdx` files can cause build errors without a plugin
+- Check that existing blog posts use a consistent citation format and match it exactly
 
 ---
 
@@ -154,14 +167,16 @@ Place this section **after** the main body content and **before** the FAQ sectio
 ### Structure
 
 ```markdown
-## Why {Company Name}
+## Why {Company Name} for {Primary Keyword}
 
 [2-3 sentences summarizing the article's key takeaways and how they connect to what the company does. Reference specific points from the article.]
 
 [1-2 sentences on why the company is uniquely qualified — link to the resources/case studies page for evidence.]
 
-[CTA callout block]
+[CTA callout block — REQUIRED, not optional]
 ```
+
+The heading must include the primary keyword for SEO value (e.g., "Why Acme for Marketing Automation" not just "Why Acme"). This section **must** contain a CTA callout block — do not skip it.
 
 ### CTA Callout Block
 Search the repo for an existing CTA component (e.g., `CTA.astro`, `CallToAction.astro`, `CTA.tsx`, `Cta.vue`).
@@ -354,17 +369,25 @@ Run this checklist against the finished article. Every item must pass before pub
 - [ ] Geographic schema added if article references a location
 
 ### Internal Linking
-- [ ] 2 links to home page
-- [ ] 2 links to pillar pages
-- [ ] 2 links to other blog posts
-- [ ] 2 links to service pages
-- [ ] 1-2 links to resources/case studies
-- [ ] All link targets verified to exist in the repo
-- [ ] CTA links to contact page
+Scan the full article body for actual `[text](url)` hyperlinks. Count each type and fail if minimums aren't met.
+
+- [ ] 2 links to home page — anchor text includes company name, href is site URL from config
+- [ ] 2 links to pillar/cornerstone blog posts — href points to existing posts in blog directory
+- [ ] 2 links to other blog posts — href points to existing posts in blog directory, topically related
+- [ ] 2 links to service pages — href matches URLs from `# Service Pages` in keyword-strategy.md
+- [ ] 1-2 links to resources/case studies page — href points to the resources or case studies URL
+- [ ] CTA button links to contact page — inside the "Why {Company}" section
+- [ ] All link targets verified to exist in the repo (grep for the path or check the file)
+- [ ] No broken links — every `[text](url)` resolves to a real page
+- [ ] Links are spread across the article body — not all clustered in one section
+- [ ] Anchor text is descriptive and keyword-relevant — no "click here" or "learn more"
+
+**If any link count is below the minimum, add more before proceeding.** This is the most commonly missed step — verify by counting actual `[text](/path)` occurrences in the markdown.
 
 ### Structure
 - [ ] Frontmatter matches existing blog post format exactly
-- [ ] "Why {Company}" section present with CTA callout block
+- [ ] "Why {Company} for {Keyword}" section present with keyword in heading
+- [ ] CTA callout block present inside "Why {Company}" section
 - [ ] FAQ section present with 4-6 questions
 - [ ] Citations/sources section present at the bottom
 
@@ -372,25 +395,43 @@ Report any failures to the user with specific line numbers and suggested fixes.
 
 ---
 
-## Step 9: Move Draft to Published
+## Step 9: Move to Published and Summarize
 
 After the article passes all checks:
 
-1. Move the original draft: `mv docs/blogs/drafts/[filename].md docs/blogs/published/[filename].md`
-2. Confirm the finished article is in the site's blog directory in `src/`
-3. Print a summary:
+1. Move the draft folder from staging to published:
+
+```bash
+mv docs/blogs/drafts/{post} docs/blogs/published/{post}
+```
+
+This completes the kanban lifecycle: `drafts/` → `published/`. The folder preserves the `parallel-blog.md`, research output, and original draft as a record.
+
+2. Update the keywords-used ledger entry to reflect the final blog path:
+
+```bash
+# Update the draft_path to blog_path in all.jsonl for this keyword
+```
+
+Replace `draft_path` with `blog_path` pointing to the final file in the blog directory (e.g., `src/content/blog/{seo-slug}.md`).
+
+3. Confirm the finished article is in the site's blog directory.
+
+4. Print a summary:
 
 ```
 ## Publish Prep Complete
 
 - **Article**: [title]
 - **URL**: /blog/[slug]
-- **File**: src/content/blog/[slug].md (or wherever it landed)
-- **Draft moved to**: docs/blogs/published/[filename].md
+- **File**: {blog-directory}/[slug].md
+- **Draft archived to**: docs/blogs/published/{post}/
 - **Schema**: Article + FAQ [+ LocalBusiness if applicable]
 - **Internal links**: [count] total ([breakdown by type])
 - **FAQs**: [count]
 - **Compliance**: All checks passed
+
+Remaining drafts in docs/blogs/drafts/: [count]
 ```
 
 ---

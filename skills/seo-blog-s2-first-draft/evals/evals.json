@@ -16,7 +16,10 @@
         "Converts keyword to research question for --query",
         "Produces 1,500-2,000 word post",
         "Includes BLUF and featured snippet paragraph",
-        "Saves to docs/blogs/drafts/"
+        "Saves to docs/blogs/drafts/ (does NOT move to published or copy to blog dir)",
+        "Uses 'we' voice throughout",
+        "Checks keyword against Topics Never to Focus On",
+        "Updates keywords-used ledger with draft_path, keyword metadata, and LSI terms"
       ],
       "files": []
     },
@@ -34,7 +37,9 @@
         "Includes 3-4 question headings",
         "Weaves E-E-A-T signals throughout",
         "Integrates LSI keywords naturally",
-        "Preserves research citations as footnotes"
+        "Preserves research citations as footnotes",
+        "Uses 'we' voice throughout",
+        "Checks keyword against Topics Never to Focus On"
       ],
       "files": []
     },
