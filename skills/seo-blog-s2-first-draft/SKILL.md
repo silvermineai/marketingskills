@@ -33,61 +33,64 @@ Read `docs/seo/keyword-strategy.md` and look for a `# Blog Post Instructions` se
 
 ---
 
-## Step 0: Select the Target Keyword
+## Step 0: Select the Target Topic
 
-### 0a. Load the keyword research
+### 0a. Check the topics file
 
-Find the latest JSONL file in `docs/seo/keyword-research/`:
+Look for `docs/seo/keyword-research/_topics.md`. This is the primary source of blog topics.
 
-```bash
-ls -t docs/seo/keyword-research/*.jsonl | head -1
-```
+**If the file exists and has topics:**
+- Read the file and pick the **first topic** in the list
+- Skip any topics that also appear in `docs/seo/keyword-research/_topics-used.md`
 
-If the directory does not exist or contains no JSONL files, **run the `/seo-blog-s1-keyword-research` skill first**, then return here.
-
-Parse the file to extract the highest-tier keyword (Tier 1 first, then Tier 2, then Tier 3). Within a tier, prefer higher volume and lower KD. Use `jq` to extract and sort:
-
-```bash
-cat <latest-file>.jsonl | jq -s 'sort_by(.tier, -.volume, .kd) | .[0]'
-```
+**If the file does not exist or is empty:**
+- Check if keyword research JSONL files exist in `docs/seo/keyword-research/`:
+  ```bash
+  ls -t docs/seo/keyword-research/*.jsonl | head -1
+  ```
+- If JSONL exists, **generate `_topics.md`** from the keyword data. Read `docs/seo/keyword-strategy.md` for company name, competitors, locations, and services. Create SEO-optimized topic strings using these formats:
+  - `{company} vs. {competitor} in {location}`
+  - `{service} by {company} in {location}`
+  - `Best {service} in {location}`
+  - `How to {achieve outcome} with {service/product}`
+  - `Do I need {service} for my {business type}?`
+  - `How much does {service} cost in {location}?`
+  - See S1 Step 8 for the full list of topic format templates
+- If no JSONL exists either, **run `/seo-blog-s1-keyword-research` first**, then return here
 
 ### 0b. Check for duplicates
 
-Before committing to this keyword, check whether you have already written about it:
+Before committing to this topic, check whether you have already written about it:
 
-1. **Check the used-keywords ledger:** Read `docs/seo/keywords-used/all.jsonl`. If the keyword or a near-duplicate topic exists there, skip it and pick the next keyword from 0a.
+1. **Check `_topics-used.md`:** If the topic appears there, skip it and pick the next one from `_topics.md`.
 
-2. **Check existing blog posts:** Scan the blog content directory for posts covering the same topic. Look at titles, frontmatter keywords, and H1s. Ask yourself:
-   - Have I written about this exact keyword before?
-   - Can I expand upon an earlier blog post or extend the content in a new way?
+2. **Check the used-keywords ledger:** Read `docs/seo/keywords-used/all.jsonl`. If a near-duplicate topic exists there, skip it.
 
-3. **If overlap is found**, present the user with the situation:
+3. **Check existing blog posts:** Scan the blog content directory for posts covering the same topic. Look at titles, frontmatter keywords, and H1s.
+
+4. **If overlap is found**, present the user with the situation:
    - Show the existing post title and path
-   - Show the new keyword and how it differs
-   - Ask: "Should I write a new post targeting this angle, update the existing post, or skip to the next keyword?"
+   - Show the new topic and how it differs
+   - Ask: "Should I write a new post targeting this angle, update the existing post, or skip to the next topic?"
 
 ### 0c. Confirm selection
 
-Present the selected keyword to the user with its metadata (volume, KD, intent, topic, cluster, notes) and ask for confirmation before proceeding.
+Present the selected topic to the user and ask for confirmation before proceeding.
 
-### 0d. Move the keyword to the used file
+### 0d. Move the topic to used
 
-Once confirmed, move the keyword record from the source JSONL to `docs/seo/keyword-research/YYYY-MM-DD-used.jsonl` (today's date). Remove it from the original file so it is not picked again.
-
-**Note:** There are two keyword tracking mechanisms — they serve different purposes:
-- **YYYY-MM-DD-used.jsonl**: Mutates the source JSONL by removing used keywords. Prevents re-selection in future runs.
-- **keywords-used/all.jsonl** (updated in Step 3): Append-only ledger linking keywords to draft paths. Used by S3 to find the exact draft file and keyword metadata.
+Once confirmed, remove the topic line from `_topics.md` and append it to `_topics-used.md` (create the file if it doesn't exist). This prevents re-selection in future runs.
 
 ---
 
 ## Step 1: Deep Research
 
-Run deep research on the selected keyword/topic using `sbd` (SEO Blog Drafter):
+Run deep research on the selected topic using `sbd` (SEO Blog Drafter):
 
 ```bash
 uvx --from git+https://github.com/silvermineai/seo-blog-drafter sbd run \
     --output-dir docs/blogs/drafts \
-    --query "<keyword or topic — phrase as a research question, e.g., 'What are the best practices for [topic]? Search the internet.'>" \
+    --query "<topic from _topics.md — phrase as a research question, e.g., 'What are the best practices for [topic]? Search the internet.'>" \
     --timeout 1800 \
     --poll-interval 5 \
     --processor lite
@@ -95,7 +98,7 @@ uvx --from git+https://github.com/silvermineai/seo-blog-drafter sbd run \
 
 **Parameters:**
 - `--output-dir`: Always use `docs/blogs/drafts` — this is the staging area for S3
-- `--query`: Convert the keyword into a research question. Add "Search the internet." to ensure web research is included
+- `--query`: Convert the topic string into a research question. Add "Search the internet." to ensure web research is included
 - `--timeout`: 1800 seconds (30 minutes) — deep research takes time
 - `--poll-interval`: 5 seconds between status checks
 - `--processor lite`: Use the lite processor for faster output
@@ -262,14 +265,11 @@ Create the `docs/seo/keywords-used/` directory if it does not exist.
 ```
 ## Blog Draft Summary
 
-- **Keyword**: <keyword> (volume: X, KD: X, intent: X)
-- **Topic**: <topic>
-- **Cluster**: <cluster>
-- **LSI terms**: <comma-separated list>
+- **Topic**: <topic from _topics.md>
 - **Word count**: <count>
 - **Draft location**: docs/blogs/drafts/{post}/{title}.md
 - **Keywords used ledger**: docs/seo/keywords-used/all.jsonl
-- **Keyword moved to**: docs/seo/keyword-research/YYYY-MM-DD-used.jsonl
+- **Topic moved to**: docs/seo/keyword-research/_topics-used.md
 - **Next step**: Run seo-blog-s3-integrate-and-publish to add schema, links, CTA, copy to blog directory, and move to published
 ```
 
@@ -301,7 +301,7 @@ Before presenting the draft, verify:
 
 ## Related Skills
 
-- **seo-blog-s1-keyword-research** — upstream: produces the keyword JSONL this skill consumes
+- **seo-blog-s1-keyword-research** — upstream: produces `_topics.md` and keyword JSONL this skill consumes
 - **content-strategy** — planning what content to create and when
 - **copywriting** — general marketing copy (this skill is blog-specific)
 - **ai-seo** — optimizing for AI search engines and answer engines

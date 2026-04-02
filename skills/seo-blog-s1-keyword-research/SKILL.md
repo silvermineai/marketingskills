@@ -304,7 +304,94 @@ After generating both files, print a summary:
 - **Top 5 keywords by opportunity**: [list]
 - **JSONL saved to**: docs/seo/keyword-research/YYYY-MM-DD-keywords.jsonl
 - **Report saved to**: docs/seo/keyword-research/YYYY-MM-DD-research.md
+- **Topics file**: docs/seo/keyword-research/_topics.md
 ```
+
+---
+
+## Step 8: Generate Topics File
+
+After producing the JSONL and research report, generate a **topics file** that S2 consumes directly. This translates raw keywords into SEO-optimized, human-readable topic strings ready for blog drafting.
+
+**File:** `docs/seo/keyword-research/_topics.md`
+
+### How to Generate Topics
+
+Pull context from three sources:
+1. **Keyword clusters** from the JSONL output (Step 7)
+2. **`docs/seo/keyword-strategy.md`** — company name, competitors, locations, services, service pages, personas
+3. **PAA questions** captured in Step 2 Source 4
+
+For each keyword cluster, generate 3-5 topic strings using the formats below. Aim for 15-30 topics total. Prioritize Tier 1 keywords and high-volume clusters.
+
+### Topic Format Templates
+
+**Comparison / Competitive:**
+- `{company} vs. {competitor} in {location}`
+- `{company} vs. {competitor}: Which is better for {use case}?`
+- `{company} alternative to {competitor}`
+- `Why {company} over {competitor} for {service}`
+- `Top {N} {competitor} alternatives in {year}`
+
+**Service / Location:**
+- `{service} by {company} in {location}`
+- `Best {service} in {location}`
+- `{service} for {industry} in {location}`
+- `Affordable {service} in {location}`
+- `{company} {service} in {location}: What to expect`
+
+**How-to / Educational:**
+- `How to {achieve outcome} with {service/product}`
+- `How {company} helps {persona} with {pain point}`
+- `{N} ways to {achieve outcome} using {service}`
+- `A complete guide to {topic} for {persona}`
+- `What is {concept} and why does it matter for {audience}?`
+
+**Reviews / Trust:**
+- `{company} {service} review ({year})`
+- `Is {company} worth it for {use case}?`
+- `{company} pricing: What you need to know`
+- `{company} case study: How {customer type} achieved {result}`
+
+**FAQs:**
+- `Do I need {service} for my {business type}?`
+- `How much does {service} cost in {location}?`
+- `What's the difference between {service A} and {service B}?`
+- `How long does it take to see results from {service}?`
+- `What should I look for in a {service} provider?`
+- `Is {service} worth it for {small businesses / startups / enterprises}?`
+- `Can {company} help with {specific problem}?`
+- `{FAQ question directly from PAA research}`
+
+### File Format
+
+Each topic is a simple markdown list item. Group by category for readability:
+
+```markdown
+## Comparison
+- Acme vs. Globex in Austin
+- Acme vs. Initech: Which is better for SaaS startups?
+- Top 5 Globex alternatives in 2026
+
+## Service
+- Marketing automation by Acme in Austin
+- Best SEO consulting in Austin
+
+## How-to
+- How to set up marketing automation for startups
+- A complete guide to content marketing ROI for marketing managers
+
+## FAQs
+- How much does SEO consulting cost in Austin?
+- Do I need marketing automation for my SaaS startup?
+- How long does it take to see results from content marketing?
+```
+
+### Used Topics Tracking
+
+When S2 uses a topic, it moves the line from `_topics.md` to `_topics-used.md` (same directory). This prevents re-selection and provides a history of what has been written.
+
+If `_topics.md` already exists from a previous S1 run, **append new topics** rather than overwriting. Deduplicate against existing entries and `_topics-used.md`.
 
 ---
 
@@ -322,7 +409,7 @@ After generating both files, print a summary:
 
 ## Handoff
 
-This skill produces a ranked keyword list (JSONL) and a human-readable research report (markdown). It does **not** write blog content or outlines. The next step in the workflow is to take the topics from the JSONL output and run deep research on each one before writing.
+This skill produces three outputs: a ranked keyword list (JSONL), a human-readable research report (markdown), and a topics file (`_topics.md`). It does **not** write blog content or outlines. S2 consumes the topics file directly — pick the first topic and draft a blog post.
 
 For related skills:
 - **content-strategy** — planning what content to create and when
