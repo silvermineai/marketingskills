@@ -15,16 +15,16 @@ The final article must be **promotional SEO material written on behalf of the co
 
 **Read these files in order (skip any that don't exist):**
 
-1. `.agents/product-marketing-context.md` (or `.claude/product-marketing-context.md`) — company name, product, positioning. Use this context; only ask for information not already covered.
-2. `docs/seo/keyword-strategy.md` — audience personas, service pages, competitors, site URL, topics to avoid, blog directory, and framework. Look for the `# Blog Post Instructions` section for the blog content directory.
-3. `docs/seo/keywords-used/all.jsonl` — previously used keywords (avoid duplicates).
-4. The most recent JSONL from `docs/seo/keyword-research/` — keyword data, PAA sources for FAQs.
+1. `docs/seo/keyword-strategy.md` — audience personas, service pages, competitors, site URL, topics to avoid, blog directory, and framework. Look for the `# Blog Post Instructions` section for the blog content directory.
+2. `docs/seo/keywords-used/all.jsonl` — previously used keywords (avoid duplicates).
+3. The most recent JSONL from `docs/seo/keyword-research/` — keyword data, PAA sources for FAQs.
 
 **If the blog directory is not specified in keyword-strategy.md**, ask the user, then add it:
 
 ```markdown
 # Blog Post Instructions
 - **Blog directory**: src/content/blog/
+- **Blog URL path**: /blog/ (the public URL path, e.g. /blog/, /newsletter/, /articles/)
 - **Framework**: Astro (or Shopify Hydrogen)
 ```
 
@@ -265,15 +265,21 @@ Filler phrases ("In today's fast-paced world"), over-hedging ("It's worth noting
 
 ---
 
-## Step 10: Lint and Validate
+## Step 10: Lint, Validate, and Add Final Touches
 
 Run the dev server and check for broken links. See `references/linting.md` for full details.
 
-1. Start the dev server: `pnpm dev &`
-2. Run `lychee http://localhost:4321/blog/{slug}` (install with `brew install lychee` if needed)
+1. Start the dev server: `pnpm dev &`.
+2. Create the posts' url: `export TEST_URL=http://localhost:4321/{blog-url-path}/{slug}`
+2. Run `lychee $TEST_URL` (install with `brew install lychee` if needed)
 3. Fix any broken internal or external links found
 4. Re-run lychee until all links pass
-5. Stop the dev server: `kill %1`
+5. Ensure `seo-linter` is installed: `cargo install --git https://github.com/silvermineai/seo-linter` (skip if already installed)
+6. Run `seo-linter $TEST_URL --lighthouse --report fixes.md`
+7. Read `fixes.md` and implement as many fixes as possible
+8. Report any issues that can't be fixed automatically to the user
+9. Run `seo-linter $TEST_URL --lighthouse --report fixes.md` a second time to verify, then move on
+7. Stop the dev server: `kill %1`
 
 ---
 
